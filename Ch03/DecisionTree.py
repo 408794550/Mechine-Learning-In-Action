@@ -173,7 +173,7 @@ def create_plot():
     # total_depth存储树的深度(高度)
     plot_node('a decision node', (0.5, 0.1), (0.1, 0.5), decision_node)
     plot_node('a leaf node', (0.8, 0.1), (0.3, 0.8), leaf_node)
-    plt.show()
+    # plt.show()
 
 
 # create_plot()
@@ -329,8 +329,6 @@ def create_plot2(in_tree):
     plot_tree.y_off = 1.0
     # 第三个参数是空字符串，因为第一次绘制时，不需要绘制0或者1
     plot_tree(in_tree, (0.5, 1.0), '')
-    # plot_node('a decision node', (0.5, 0.1), (0.1, 0.5), decision_node)
-    # plot_node('a leaf node', (0.8, 0.1), (0.3, 0.8), leaf_node)
     plt.show()
 
 
@@ -338,6 +336,29 @@ logging.info(my_tree)
 create_plot2(my_tree)
 
 
-def classify(input, feature_labels, test_vec):
-    pass
+def classify(input_tree, feature_labels, test_vec):
+    first_str = list(input_tree.keys())[0]
+    second_dict = input_tree[first_str]
+    feature_index = feature_labels.index(first_str)
+    for key in second_dict.keys():
+        if test_vec[feature_index] == key:
+            if type(second_dict[key]).__name__ == 'dict':
+                class_label = classify(second_dict[key], feature_labels, test_vec)
+            else:
+                class_label = second_dict[key]
+    return class_label
+
+
+# logging.info(classify(my_tree, labels, [1, 1]))
+
+
+# 使用决策树预测隐形眼镜类型
+fr = open('lenses.txt')
+lenses = [inst.strip().split('\t') for inst in fr.readlines()]
+lenses_labels = ['age', 'prescript', 'astigmatic', 'tearRate']
+lenses_tree = create_tree(lenses, lenses_labels)
+logging.info(lenses_tree)
+
+
+create_plot2(lenses_tree)
 
